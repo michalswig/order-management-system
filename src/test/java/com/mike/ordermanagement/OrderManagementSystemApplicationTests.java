@@ -1,4 +1,4 @@
-package com.mike.order_management_system;
+package com.mike.ordermanagement;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

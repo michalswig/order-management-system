@@ -1,4 +1,4 @@
-package com.mike.order_management_system;
+package com.mike.ordermanagement;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
