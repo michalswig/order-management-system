@@ -11,13 +11,10 @@ import org.mapstruct.factory.Mappers;
 public interface OrderMapper {
     OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
 
-    // Map DTO -> Entity
-    @Mapping(target = "id", ignore = true)  // ID is auto-generated
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
-    // Let `deletedAt` be null initially
     Order toEntity(OrderCreateRequest orderCreateRequest);
 
-    // Map Entity -> DTO
     OrderGetResponse toDto(Order order);
 
 }
