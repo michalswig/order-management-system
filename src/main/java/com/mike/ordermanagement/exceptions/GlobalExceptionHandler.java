@@ -1,12 +1,11 @@
 package com.mike.ordermanagement.exceptions;
 
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,35 +21,31 @@ public class GlobalExceptionHandler {
         return ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .map(error -> "Invalid value: '" + error.getRejectedValue() + "' for field: '" + error.getField() + "'. " + error.getDefaultMessage())
                 .toList();
     }
 
-    // Handle Order Not Found (Not Found - 404)
-    @ExceptionHandler(OrderNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleOrderNotFoundException(OrderNotFoundException ex) {
-        Map<String, Object> body = Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", HttpStatus.NOT_FOUND.value(),
-                "error", "Not Found",
-                "message", ex.getMessage(),
-                "path", "/api/orders"
-        );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
-    }
-
-    // Handle No Orders Found (Not Found - 404)
-    @ExceptionHandler(NoOrdersFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleNoOrdersFoundException(NoOrdersFoundException ex) {
-        return ex.getMessage();
-    }
-
-    // Handle Illegal Argument (Bad Request - 400)
+    // Handle invalid order status in query parameters
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleIllegalArgumentException(IllegalArgumentException ex) {
-        return ex.getMessage();
+    public Map<String, Object> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return Map.of(
+                "timestamp", LocalDateTime.now(),
+                "status", HttpStatus.BAD_REQUEST.value(),
+                "error", "Bad Request",
+                "message", ex.getMessage()
+        );
     }
 
+    // Handle method argument type mismatch (query parameter issues)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Object> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        return Map.of(
+                "timestamp", LocalDateTime.now(),
+                "status", HttpStatus.BAD_REQUEST.value(),
+                "error", "Bad Request",
+                "message", "Invalid value: '" + ex.getValue() + "' for field: '" + ex.getName() + "'. Expected type: " + ex.getRequiredType().getSimpleName()
+        );
+    }
 }
