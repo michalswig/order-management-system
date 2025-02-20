@@ -5,11 +5,9 @@ import com.mike.ordermanagement.dto.OrderFilter;
 import com.mike.ordermanagement.dto.OrderGetResponse;
 import com.mike.ordermanagement.entity.Order;
 import com.mike.ordermanagement.exceptions.NoOrdersFoundException;
-import com.mike.ordermanagement.exceptions.OrderNotFoundException;
 import com.mike.ordermanagement.mapper.OrderMapper;
 import com.mike.ordermanagement.repository.OrderRepository;
 import com.mike.ordermanagement.repository.specification.OrderSpecification;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -36,9 +34,9 @@ public class OrderService {
     }
 
     public OrderGetResponse getOrderById(Long id) {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new OrderNotFoundException(id));
-        return orderMapper.toDto(order);
+        return orderRepository.findById(id)
+                .map(orderMapper::toDto)
+                .orElseThrow(() -> new NoOrdersFoundException("Order with ID " + id + " not found."));
     }
 
     public List<OrderGetResponse> getOrders(OrderFilter filter) {
@@ -46,11 +44,13 @@ public class OrderService {
                 .stream()
                 .map(orderMapper::toDto)
                 .toList();
-        if(orders.isEmpty()) {
+
+        if (orders.isEmpty()) {
             throw new NoOrdersFoundException("No orders found matching the filter criteria.");
         }
         return orders;
     }
+
 
 
 }
