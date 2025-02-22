@@ -1,10 +1,9 @@
 package com.mike.ordermanagement.controller;
 
-import com.mike.ordermanagement.dto.OrderCreateRequest;
-import com.mike.ordermanagement.dto.OrderFilter;
-import com.mike.ordermanagement.dto.OrderGetResponse;
+import com.mike.ordermanagement.dto.order.OrderCreateRequest;
+import com.mike.ordermanagement.dto.order.OrderFilter;
+import com.mike.ordermanagement.dto.order.OrderGetResponse;
 import com.mike.ordermanagement.service.OrderService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,8 +29,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderGetResponse> createOrder(@Valid @RequestBody OrderCreateRequest request) {
-        OrderGetResponse response = orderService.createOrder(request);
+    public ResponseEntity<OrderGetResponse> createOrder(@RequestBody OrderCreateRequest request) {
+        OrderGetResponse response = orderService.createOrder(request.getCustomerId(), request.getProductId(), request.getQuantity());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
