@@ -1,61 +1,115 @@
 package com.mike.ordermanagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "orders")
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 public class Order {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "{NotNull.order.name}")
-    @Size(min = 3, max = 100, message = "{Size.order.name}")
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    @JsonBackReference
+    private Customer customer;
 
-    @Min(value = 1, message = "{Min.order.quantity}")
-    private Long quantity;
-
-    @NotNull(message = "{NotNull.order.price}")
-    @DecimalMin(value = "0.01", message = "{DecimalMin.order.price}")
-    @Digits(integer = 10, fraction = 2, message = "{Digits.order.price}")
-    private BigDecimal price;
-
-    @NotNull(message = "{NotNull.order.status}")
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @PastOrPresent(message = "{PastOrPresent.order.createdAt}")
-    private LocalDateTime createdAt;
+    @Column(name = "order_date")
+    private LocalDateTime orderDate;
+    @Column(name = "canceled_date")
+    private LocalDateTime canceledDate;
+    @Column(name = "delivered_date")
+    private LocalDateTime deliveryDate;
 
-    @PastOrPresent(message = "{PastOrPresent.order.updatedAt}")
-    private LocalDateTime updatedAt;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<OrderProduct> orderProducts = new ArrayList<>();
 
-    @FutureOrPresent(message = "{FutureOrPresent.order.deletedAt}")
-    private LocalDateTime deletedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+    public void addOrderProduct(OrderProduct orderProduct) {
+        orderProducts.add(orderProduct);
+        orderProduct.setOrder(this);
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+    public Order() {
     }
+
+    public Order(Long id, Customer customer, OrderStatus status, LocalDateTime orderDate, LocalDateTime canceledDate, LocalDateTime deliveryDate) {
+        this.id = id;
+        this.customer = customer;
+        this.status = status;
+        this.orderDate = orderDate;
+        this.canceledDate = canceledDate;
+        this.deliveryDate = deliveryDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getOrderDate() {
+        return orderDate;
+    }
+
+    public LocalDateTime getCanceledDate() {
+        return canceledDate;
+    }
+
+    public LocalDateTime getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public void setCanceledDate(LocalDateTime canceledDate) {
+        this.canceledDate = canceledDate;
+    }
+
+    public void setDeliveryDate(LocalDateTime deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
+
+    public void setOrderProducts(List<OrderProduct> orderProducts) {
+        this.orderProducts = orderProducts;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return Objects.equals(getId(), order.getId()) && Objects.equals(getCustomer(), order.getCustomer());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getCustomer());
+    }
+
 
 }
