@@ -4,6 +4,7 @@ import com.mike.ordermanagement.dto.order.OrderCreateRequest;
 import com.mike.ordermanagement.dto.order.OrderFilter;
 import com.mike.ordermanagement.dto.order.OrderGetResponse;
 import com.mike.ordermanagement.service.OrderService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +28,8 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderGetResponse>> getOrders(OrderFilter filter) {
-        return ResponseEntity.ok(orderService.getOrders(filter));
+    public ResponseEntity<List<OrderGetResponse>> getOrders(@ModelAttribute OrderFilter filter, Pageable pageable) {
+        return ResponseEntity.ok(orderService.getFilteredOrders(filter, pageable));
     }
 
     @PostMapping

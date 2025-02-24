@@ -2,9 +2,12 @@ package com.mike.ordermanagement.repository.specification;
 
 import com.mike.ordermanagement.dto.order.OrderFilter;
 import com.mike.ordermanagement.entity.Order;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,32 +19,40 @@ public class OrderSpecification {
     public static Specification<Order> build(OrderFilter filter) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-//            if (filter.getId() != null) {
-//                predicates.add(cb.equal(root.get("id"), filter.getId()));
-//            }
-//            if (filter.getName() != null) {
-//                predicates.add(cb.like(root.get("name"), "%" + filter.getName() + "%"));
-//            }
-//            if (filter.getQuantity() != null) {
-//                predicates.add(cb.equal(root.get("quantity"), filter.getQuantity()));
-//            }
-//            if (filter.getPrice() != null) {
-//                predicates.add(cb.equal(root.get("price"), filter.getPrice()));
-//            }
-//            if (filter.getStatus() != null) {
-//                predicates.add(cb.equal(root.get("status"), filter.getStatus()));
-//            }
-//            if (filter.getCreatedAt() != null) {
-//                predicates.add(cb.equal(root.get("createdAt"), filter.getCreatedAt()));
-//            }
-//            if (filter.getUpdatedAt() != null) {
-//                predicates.add(cb.equal(root.get("updatedAt"), filter.getUpdatedAt()));
-//            }
-//            if (filter.getDeletedAt() != null) {
-//                predicates.add(cb.equal(root.get("deletedAt"), filter.getDeletedAt()));
-//            }
+
+            addIfPresent(predicates, cb, root.get("customer").get("id"), filter.getCustomerId());
+            addIfPresent(predicates, cb, root.get("status"), filter.getStatus());
+
+            addDateRangePredicate(predicates, cb, root.get("orderDate"),
+                    filter.getOrderDateFrom(), filter.getOrderDateTo()
+            );
+            addDateRangePredicate(predicates, cb, root.get("deliveryDate"),
+                    filter.getDeliveryDateFrom(), filter.getDeliveryDateTo()
+            );
+            addDateRangePredicate(predicates, cb, root.get("canceledDate"),
+                    filter.getCanceledDateFrom(), filter.getCanceledDateTo()
+            );
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    private static <T> void addIfPresent(List<Predicate> predicates, CriteriaBuilder cb,
+                                         Path<LocalDateTime> path, T value) {
+        if(value != null) {
+            predicates.add(cb.equal(path, value));
+        }
+    }
+
+    private static void addDateRangePredicate(List<Predicate> predicates, CriteriaBuilder cb,
+                                              Path<LocalDateTime> path, LocalDateTime from, LocalDateTime to) {
+        if(from != null && to != null) {
+            predicates.add(cb.between(path, from, to));
+        } else if(from != null) {
+            predicates.add(cb.greaterThanOrEqualTo(path, from));
+        } else if(to != null) {
+            predicates.add(cb.lessThanOrEqualTo(path, to));
+        }
     }
 
 }
