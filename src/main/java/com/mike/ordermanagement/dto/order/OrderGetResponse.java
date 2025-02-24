@@ -1,6 +1,5 @@
 package com.mike.ordermanagement.dto.order;
 
-import com.mike.ordermanagement.entity.Customer;
 import com.mike.ordermanagement.entity.OrderStatus;
 
 import java.time.LocalDateTime;
