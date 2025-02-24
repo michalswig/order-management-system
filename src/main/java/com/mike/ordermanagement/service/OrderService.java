@@ -9,7 +9,9 @@ import com.mike.ordermanagement.repository.CustomerRepository;
 import com.mike.ordermanagement.repository.OrderRepository;
 import com.mike.ordermanagement.repository.ProductRepository;
 import com.mike.ordermanagement.repository.specification.OrderSpecification;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -55,16 +57,17 @@ public class OrderService {
                 .orElseThrow(() -> new NoOrdersFoundException("Order with ID " + id + " not found."));
     }
 
-    public List<OrderGetResponse> getOrders(OrderFilter filter) {
-        List<OrderGetResponse> orders = orderRepository.findAll(OrderSpecification.build(filter), Sort.by("createdAt").descending())
-                .stream()
-                .map(OrderConverter::toOrderGetResponse)
-                .toList();
+    public List<OrderGetResponse> getFilteredOrders(OrderFilter filter, Pageable pageable) {
+        Specification<Order> specification = OrderSpecification.build(filter);
 
-        if (orders.isEmpty()) {
+        Page<Order> orderPage = orderRepository.findAll(specification, pageable);
+
+        if (orderPage.isEmpty()) {
             throw new NoOrdersFoundException("No orders found matching the filter criteria.");
         }
-        return orders;
+        return orderPage.stream()
+                .map(OrderConverter::toOrderGetResponse)
+                .toList();
     }
 
 
