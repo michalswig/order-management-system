@@ -7,15 +7,15 @@ import java.time.LocalDateTime;
 
 public class OrderGetResponse {
     Long id;
-    Customer customer;
+    Long customerId;
     OrderStatus status;
     LocalDateTime orderDate;
     LocalDateTime deliveryDate;
     LocalDateTime canceledDate;
 
-    public OrderGetResponse(Long id, Customer customer, OrderStatus status, LocalDateTime orderDate, LocalDateTime deliveryDate, LocalDateTime canceledDate) {
+    public OrderGetResponse(Long id, Long customerId, OrderStatus status, LocalDateTime orderDate, LocalDateTime deliveryDate, LocalDateTime canceledDate) {
         this.id = id;
-        this.customer = customer;
+        this.customerId = customerId;
         this.status = status;
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
@@ -26,8 +26,8 @@ public class OrderGetResponse {
         return id;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public Long getCustomerId() {
+        return customerId;
     }
 
     public OrderStatus getStatus() {

@@ -16,7 +16,7 @@ public class OrderConverter {
 
         return new OrderGetResponse(
                 order.getId(),
-                order.getCustomer(),
+                order.getCustomer().getId(),
                 order.getStatus(),
                 order.getOrderDate(),
                 order.getCanceledDate(),
