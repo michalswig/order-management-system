@@ -8,7 +8,7 @@ import com.mike.ordermanagement.mapper.OrderConverter;
 import com.mike.ordermanagement.repository.CustomerRepository;
 import com.mike.ordermanagement.repository.OrderRepository;
 import com.mike.ordermanagement.repository.ProductRepository;
-import com.mike.ordermanagement.repository.specification.OrderSpecification;
+import com.mike.ordermanagement.repository.specification.OrderSpecificationBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -58,7 +58,7 @@ public class OrderService {
     }
 
     public List<OrderGetResponse> getFilteredOrders(OrderFilter filter, Pageable pageable) {
-        Specification<Order> specification = OrderSpecification.build(filter);
+        Specification<Order> specification = OrderSpecificationBuilder.build(filter);
 
         Page<Order> orderPage = orderRepository.findAll(specification, pageable);
 
@@ -69,7 +69,6 @@ public class OrderService {
                 .map(OrderConverter::toOrderGetResponse)
                 .toList();
     }
-
 
 
 }
