@@ -2,6 +2,7 @@ package com.mike.ordermanagement.repository.specification;
 
 import com.mike.ordermanagement.entity.Order;
 import com.mike.ordermanagement.repository.OrderRepository;
+import com.mike.ordermanagement.util.OrderDataGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -23,11 +24,8 @@ class OrderByDateRangeSpecificationTest {
     @Test
     void givenDateRange_whenFindOrders_thenReturnMatchingOrders() {
         // Given
-        Order order1 = new Order();
-        order1.setOrderDate(LocalDateTime.of(2024, 1, 1, 0, 0));
-
-        Order order2 = new Order();
-        order2.setOrderDate(LocalDateTime.of(2024, 1, 31, 23, 59));
+        Order order1 = OrderDataGenerator.orderGeneratorSetOrderDate(LocalDateTime.of(2024, 1, 1, 0, 0));
+        Order order2 = OrderDataGenerator.orderGeneratorSetOrderDate(LocalDateTime.of(2024, 1, 31, 23, 59));
 
         Specification<Order> specification = new OrderByDateRangeSpecification(
                 "orderDate",
@@ -35,13 +33,13 @@ class OrderByDateRangeSpecificationTest {
                 LocalDateTime.of(2024, 1, 31, 23, 59)
         );
 
-        when(orderRepository.findAll(specification)).thenReturn(List.of(order1));
+        when(orderRepository.findAll(specification)).thenReturn(List.of(order1, order2));
 
         // When
         List<Order> orders = orderRepository.findAll(specification);
 
         // Then
-        assertThat(orders).hasSize(1);
+        assertThat(orders).hasSize(2);
         assertThat(orders.get(0).getOrderDate()).isEqualTo(LocalDateTime.of(2024, 1, 1, 0, 0));
 
     }

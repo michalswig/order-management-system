@@ -1,8 +1,8 @@
 package com.mike.ordermanagement.repository.specification;
 
-import com.mike.ordermanagement.entity.Customer;
 import com.mike.ordermanagement.entity.Order;
 import com.mike.ordermanagement.repository.OrderRepository;
+import com.mike.ordermanagement.util.OrderDataGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,12 +27,8 @@ class OrderByCustomerIdSpecificationTest {
     @Test
     void givenCustomerId_whenFindOrders_thenReturnOrders() {
         //given
-        Customer customer = new Customer();
-        customer.setId(1L);
-        Order order1 = new Order();
-        order1.setCustomer(customer);
-        Order order2 = new Order();
-        order2.setCustomer(customer);
+        Order order1 = OrderDataGenerator.orderGenerator();
+        Order order2 = OrderDataGenerator.orderGenerator();
         List<Order> mockOrders = Arrays.asList(order1, order2);
         //Mock repository
         when(orderRepository.findAll(specification)).thenReturn(mockOrders);

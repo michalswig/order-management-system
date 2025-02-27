@@ -3,6 +3,7 @@ package com.mike.ordermanagement.repository.specification;
 import com.mike.ordermanagement.entity.Order;
 import com.mike.ordermanagement.entity.OrderStatus;
 import com.mike.ordermanagement.repository.OrderRepository;
+import com.mike.ordermanagement.util.OrderDataGenerator;
 import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,10 +26,8 @@ class OrderByStatusSpecificationTest {
     @Test
     void givenStatus_whenFindOrders_thenReturnGivenOrders() {
         //given
-        Order order1 = new Order();
-        order1.setStatus(OrderStatus.PENDING);
-        Order order2 = new Order();
-        order2.setStatus(OrderStatus.PENDING);
+        Order order1 = OrderDataGenerator.orderGeneratorSetOrderStatus(OrderStatus.PENDING);
+        Order order2 = OrderDataGenerator.orderGeneratorSetOrderStatus(OrderStatus.PENDING);
         List<Order> mockOrders = Arrays.asList(order1, order2);
         //Mock repository
         when(orderRepository.findAll(specification)).thenReturn(mockOrders);

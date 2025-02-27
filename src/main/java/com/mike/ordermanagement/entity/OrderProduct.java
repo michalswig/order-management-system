@@ -1,9 +1,15 @@
 package com.mike.ordermanagement.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Objects;
 
 @Entity
 @Table(name = "order_products")
+@Getter
+@Setter
 public class OrderProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,35 +34,15 @@ public class OrderProduct {
         this.quantity = quantity;
     }
 
-    public Long getId() {
-        return id;
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderProduct that = (OrderProduct) o;
+        return Objects.equals(getId(), that.getId());
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public Long getQuantity() {
-        return quantity;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public void setQuantity(Long quantity) {
-        this.quantity = quantity;
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 }

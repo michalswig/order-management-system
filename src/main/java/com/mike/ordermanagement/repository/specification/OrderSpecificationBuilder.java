@@ -4,28 +4,26 @@ import com.mike.ordermanagement.dto.order.OrderFilter;
 import com.mike.ordermanagement.entity.Order;
 import org.springframework.data.jpa.domain.Specification;
 
-public class OrderSpecificationBuilder {
+import java.util.Objects;
 
-    private OrderSpecificationBuilder() {
-        throw new UnsupportedOperationException("you can not initiate it.");
-    }
+public class OrderSpecificationBuilder {
 
     public static Specification<Order> build(OrderFilter filter) {
         Specification<Order> spec = Specification.where(null);
 
-        if (filter.getCustomerId() != null) {
+        if (Objects.nonNull(filter.getCustomerId())) {
             spec = spec.and(new OrderByCustomerIdSpecification(filter.getCustomerId()));
         }
-        if (filter.getStatus() != null) {
+        if (Objects.nonNull(filter.getStatus())) {
             spec = spec.and(new OrderByStatusSpecification(filter.getStatus().toString()));
         }
-        if (filter.getOrderDateFrom() != null || filter.getOrderDateTo() != null) {
+        if (Objects.nonNull(filter.getOrderDateFrom()) || Objects.nonNull(filter.getOrderDateTo())) {
             spec = spec.and(new OrderByDateRangeSpecification("orderDate", filter.getOrderDateFrom(), filter.getOrderDateTo()));
         }
-        if (filter.getDeliveryDateFrom() != null || filter.getDeliveryDateTo() != null) {
+        if (Objects.nonNull(filter.getDeliveryDateFrom()) || Objects.nonNull(filter.getDeliveryDateTo())) {
             spec = spec.and(new OrderByDateRangeSpecification("deliveryDate", filter.getDeliveryDateFrom(), filter.getDeliveryDateTo()));
         }
-        if (filter.getCanceledDateFrom() != null || filter.getCanceledDateTo() != null) {
+        if (Objects.nonNull(filter.getCanceledDateFrom()) || Objects.nonNull(filter.getCanceledDateTo())) {
             spec = spec.and(new OrderByDateRangeSpecification("canceledDate", filter.getCanceledDateFrom(), filter.getCanceledDateTo()));
         }
 
