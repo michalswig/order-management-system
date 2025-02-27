@@ -14,6 +14,9 @@ public class OrderFilter {
     private LocalDateTime canceledDateFrom;
     private LocalDateTime canceledDateTo;
 
+    public OrderFilter() {
+    }
+
     public OrderFilter(Long customerId) {
         this.customerId = customerId;
     }
