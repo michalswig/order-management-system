@@ -35,6 +35,10 @@ public class Product {
     public Product() {
     }
 
+    public Product(Long id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

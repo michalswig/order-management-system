@@ -22,4 +22,16 @@ public class OrderCreateRequest {
     public Long getQuantity() {
         return quantity;
     }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
+    }
 }
