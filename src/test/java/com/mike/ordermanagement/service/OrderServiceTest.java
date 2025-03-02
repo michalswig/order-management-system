@@ -3,10 +3,12 @@ package com.mike.ordermanagement.service;
 import com.mike.ordermanagement.dto.order.OrderCreateRequest;
 import com.mike.ordermanagement.dto.order.OrderGetResponse;
 import com.mike.ordermanagement.entity.*;
+import com.mike.ordermanagement.exceptions.NoOrdersFoundException;
 import com.mike.ordermanagement.repository.CustomerRepository;
 import com.mike.ordermanagement.repository.OrderRepository;
 import com.mike.ordermanagement.repository.ProductRepository;
 import com.mike.ordermanagement.util.CustomerDataGenerator;
+import com.mike.ordermanagement.util.OrderDataGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -106,5 +108,30 @@ class OrderServiceTest {
         verify(customerRepository, times(1)).findById(request.getCustomerId());
         verify(orderRepository, never()).save(any(Order.class));
     }
+
+    @Test
+    void whenPassingValidOrderId_thenReturnOrder() {
+        //Given
+        Long orderId = 1L;
+        Order order = OrderDataGenerator.orderGenerator();
+        order.setId(orderId);
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        //When & Then
+        OrderGetResponse orderById = orderService.getOrderById(orderId);
+        assertThat(orderId).isEqualTo(orderById.getId());
+        verify(orderRepository, times(1)).findById(orderId);
+
+    }
+
+    @Test
+    void whenOrderIdNotFound_thenThrowNoOrdersFoundException() {
+        // Given
+        Long orderId = 999L;
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(NoOrdersFoundException.class, () -> orderService.getOrderById(orderId));
+    }
+
 
 }
