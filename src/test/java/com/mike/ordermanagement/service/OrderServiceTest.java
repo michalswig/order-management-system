@@ -1,6 +1,7 @@
 package com.mike.ordermanagement.service;
 
 import com.mike.ordermanagement.dto.order.OrderCreateRequest;
+import com.mike.ordermanagement.dto.order.OrderFilter;
 import com.mike.ordermanagement.dto.order.OrderGetResponse;
 import com.mike.ordermanagement.entity.*;
 import com.mike.ordermanagement.exceptions.NoOrdersFoundException;
@@ -15,12 +16,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -131,6 +139,23 @@ class OrderServiceTest {
 
         // When & Then
         assertThrows(NoOrdersFoundException.class, () -> orderService.getOrderById(orderId));
+    }
+
+    @Test
+    void whenPassingValidFilterAndValidPageable_thenOrdersListIsFound() {
+        //given
+        OrderFilter filter = new OrderFilter();
+        Pageable pageable = PageRequest.of(0, 10);
+        Order order1 = OrderDataGenerator.orderGenerator();
+        Order order2 = OrderDataGenerator.orderGenerator();
+        List<Order> orders = Arrays.asList(order1, order2);
+        Page<Order> orderPage = new PageImpl<>(orders,pageable,orders.size());
+        when(orderRepository.findAll(any(Specification.class),eq(pageable))).thenReturn(orderPage);
+        //when
+        List<OrderGetResponse> filteredOrders = orderService.getFilteredOrders(filter, pageable);
+        //then
+        assertThat(filteredOrders.size()).isEqualTo(2);
+        verify(orderRepository, times(1)).findAll(any(Specification.class),eq(pageable));
     }
 
 
