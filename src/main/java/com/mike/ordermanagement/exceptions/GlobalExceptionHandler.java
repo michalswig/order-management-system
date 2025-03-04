@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -26,6 +28,14 @@ public class GlobalExceptionHandler {
     private String getRequestPath() {
         return ((org.springframework.web.context.request.ServletRequestAttributes) org.springframework.web.context.request.RequestContextHolder.currentRequestAttributes())
                 .getRequest().getRequestURI();
+    }
+
+    @ExceptionHandler(ProductValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleProductValidationException(ProductValidationException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", ex.getMessage());
+        return errorResponse;
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

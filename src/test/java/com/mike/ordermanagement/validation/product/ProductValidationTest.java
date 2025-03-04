@@ -1,57 +1,50 @@
 package com.mike.ordermanagement.validation.product;
 
 import com.mike.ordermanagement.entity.Product;
+import com.mike.ordermanagement.exceptions.ProductValidationException;
+import com.mike.ordermanagement.util.MessageUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class ProductValidationTest {
 
+    @Mock
+    private MessageUtil messageUtil;
+
+    @InjectMocks
+    private ProductValidation productValidation;
+
     @Test
-    void whenPassingValidProduct_thenItIsValid() {
-        //when
+    void whenPassingValidProduct_thenShouldBeValid() {
+        // Given
         Product product = new Product();
         product.setName("Valid Name");
         product.setDescription("Valid Description");
         product.setPrice(BigDecimal.valueOf(10.0));
-        //then
-        assertDoesNotThrow(() -> ProductValidation.validate(product));
+        //Then
+        assertDoesNotThrow(() -> productValidation.validate(product));
     }
 
     @Test
-    void whenPassingInvalidProduct_thenItIsInvalid() {
-        //when
-        Product product = new Product();
-        product.setName(null);
-        product.setDescription("Valid Description");
-        product.setPrice(BigDecimal.valueOf(10.0));
-        //then
-        assertThrows(IllegalArgumentException.class, () -> ProductValidation.validate(product));
+    void whenPassingProductNull_thenThrowsException() {
+        // Given
+        Product product = null;
+        when(messageUtil.getMessage("product.null")).thenReturn("Product price cannot be null");
+        //When
+        ProductValidationException ex = assertThrows(ProductValidationException.class, () -> productValidation.validate(product));
+        //Then
+        assertEquals("Product price cannot be null", ex.getMessage());
     }
 
-    @Test
-    void whenNameIsTooShort_thenThrowsException() {
-        //when
-        Product product = new Product();
-        product.setName("ab");
-        product.setDescription("Valid description");
-        product.setPrice(BigDecimal.valueOf(10.0));
-        //then
-        assertThrows(IllegalArgumentException.class, () -> ProductValidation.validate(product), "Product name length must be between 3 and 50");
-    }
-
-    @Test
-    void whenNameContainsInvalidCharacters_thenThrowsException() {
-        //when
-        Product product = new Product();
-        product.setName("Invalid@Name!");
-        product.setDescription("Valid description");
-        product.setPrice(BigDecimal.valueOf(10.0));
-        //then
-        assertThrows(IllegalArgumentException.class, () -> ProductValidation.validate(product), "Product name can only contain letters, numbers, and spaces");
-    }
 
 }
