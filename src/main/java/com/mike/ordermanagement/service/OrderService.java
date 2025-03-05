@@ -1,7 +1,7 @@
 package com.mike.ordermanagement.service;
 
 import com.mike.ordermanagement.dto.order.OrderFilter;
-import com.mike.ordermanagement.dto.order.OrderGetResponse;
+import com.mike.ordermanagement.dto.order.OrderResponse;
 import com.mike.ordermanagement.entity.*;
 import com.mike.ordermanagement.exceptions.NoOrdersFoundException;
 import com.mike.ordermanagement.mapper.OrderConverter;
@@ -30,7 +30,7 @@ public class OrderService {
         this.customerRepository = customerRepository;
     }
 
-    public OrderGetResponse createOrder(Long customerId, Long productId, Long quantity) {
+    public OrderResponse createOrder(Long customerId, Long productId, Long quantity) {
         Customer customer = customerRepository
                 .findById(customerId)
                 .orElseThrow(() -> new IllegalArgumentException("Customer with ID " + customerId + " not found."));
@@ -51,13 +51,13 @@ public class OrderService {
         return OrderConverter.toOrderGetResponse(savedOrder);
     }
 
-    public OrderGetResponse getOrderById(Long id) {
+    public OrderResponse getOrderById(Long id) {
         return orderRepository.findById(id)
                 .map(OrderConverter::toOrderGetResponse)
                 .orElseThrow(() -> new NoOrdersFoundException("Order with ID " + id + " not found."));
     }
 
-    public List<OrderGetResponse> getFilteredOrders(OrderFilter filter, Pageable pageable) {
+    public List<OrderResponse> getFilteredPagedOrders(OrderFilter filter, Pageable pageable) {
         Specification<Order> specification = OrderSpecificationBuilder.build(filter);
 
         Page<Order> orderPage = orderRepository.findAll(specification, pageable);

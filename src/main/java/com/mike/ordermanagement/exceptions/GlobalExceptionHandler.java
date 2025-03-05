@@ -32,10 +32,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleProductValidationException(ProductValidationException ex) {
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", ex.getMessage());
-        return errorResponse;
+    public ErrorResponse handleProductValidationException(ProductValidationException ex) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                getRequestPath()
+        );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

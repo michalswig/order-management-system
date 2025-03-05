@@ -1,11 +1,10 @@
 package com.mike.ordermanagement.dto.order;
 
-import com.mike.ordermanagement.entity.Customer;
 import com.mike.ordermanagement.entity.OrderStatus;
 
 import java.time.LocalDateTime;
 
-public class OrderGetResponse {
+public class OrderResponse {
     Long id;
     Long customerId;
     OrderStatus status;
@@ -13,7 +12,7 @@ public class OrderGetResponse {
     LocalDateTime deliveryDate;
     LocalDateTime canceledDate;
 
-    public OrderGetResponse(Long id, Long customerId, OrderStatus status, LocalDateTime orderDate, LocalDateTime deliveryDate, LocalDateTime canceledDate) {
+    public OrderResponse(Long id, Long customerId, OrderStatus status, LocalDateTime orderDate, LocalDateTime deliveryDate, LocalDateTime canceledDate) {
         this.id = id;
         this.customerId = customerId;
         this.status = status;
