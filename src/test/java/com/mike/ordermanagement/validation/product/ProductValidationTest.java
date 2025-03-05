@@ -11,18 +11,34 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 class ProductValidationTest {
 
     @Mock
     private MessageUtil messageUtil;
+    @Mock
+    private NameValidator nameValidator;
+    @Mock
+    private DescriptionValidator descriptionValidator;
+    @Mock
+    private PriceValidator priceValidator;
 
     @InjectMocks
-    private ProductValidation productValidation;
+    private CompositeValidator compositeValidator;
+
+    @BeforeEach
+    void setUp() {
+        compositeValidator = new CompositeValidator(
+                List.of(nameValidator, descriptionValidator, priceValidator),
+                messageUtil
+        );
+    }
 
     @Test
     void whenPassingValidProduct_thenShouldBeValid() {
@@ -32,19 +48,18 @@ class ProductValidationTest {
         product.setDescription("Valid Description");
         product.setPrice(BigDecimal.valueOf(10.0));
         //Then
-        assertDoesNotThrow(() -> productValidation.validate(product));
+        assertDoesNotThrow(() -> compositeValidator.validate(product));
     }
 
     @Test
     void whenPassingProductNull_thenThrowsException() {
         // Given
         Product product = null;
-        when(messageUtil.getMessage("product.null")).thenReturn("Product price cannot be null");
+        when(messageUtil.getMessage("product.null")).thenReturn("Product cannot be null");
         //When
-        ProductValidationException ex = assertThrows(ProductValidationException.class, () -> productValidation.validate(product));
+        ProductValidationException ex = assertThrows(ProductValidationException.class, () -> compositeValidator.validate(product));
         //Then
-        assertEquals("Product price cannot be null", ex.getMessage());
+        assertEquals("Product cannot be null", ex.getMessage());
     }
-
 
 }

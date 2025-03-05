@@ -9,6 +9,7 @@ import com.mike.ordermanagement.repository.CustomerRepository;
 import com.mike.ordermanagement.repository.OrderRepository;
 import com.mike.ordermanagement.repository.ProductRepository;
 import com.mike.ordermanagement.repository.specification.OrderSpecificationBuilder;
+import com.mike.ordermanagement.validation.product.CompositeValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,12 +23,14 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
+    private final CompositeValidator compositeValidator;
 
 
-    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, CustomerRepository customerRepository) {
+    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, CustomerRepository customerRepository, CompositeValidator compositeValidator) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.customerRepository = customerRepository;
+        this.compositeValidator = compositeValidator;
     }
 
     public OrderResponse createOrder(Long customerId, Long productId, Long quantity) {
@@ -45,6 +48,8 @@ public class OrderService {
 
         order.addOrderProduct(orderProduct);
         product.addOrderProduct(orderProduct);
+
+        compositeValidator.validate(product);
 
         Order savedOrder = orderRepository.save(order);
 
