@@ -1,6 +1,6 @@
 package com.mike.ordermanagement.convert;
 
-import com.mike.ordermanagement.dto.order.OrderResponse;
+import com.mike.ordermanagement.dto.order.OrderGetResponse;
 import com.mike.ordermanagement.entity.Order;
 
 public class OrderConverter {
@@ -9,12 +9,12 @@ public class OrderConverter {
         throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 
-    public static OrderResponse toOrderGetResponse(Order order) {
+    public static OrderGetResponse toOrderGetResponse(Order order) {
         if (order == null) {
             throw new IllegalArgumentException("Order cannot be null");
         }
 
-        return new OrderResponse(
+        return new OrderGetResponse(
                 order.getId(),
                 order.getCustomer().getId(),
                 order.getStatus(),
@@ -25,3 +25,4 @@ public class OrderConverter {
     }
 
 }
+
