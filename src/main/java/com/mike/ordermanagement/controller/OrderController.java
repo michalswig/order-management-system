@@ -24,18 +24,18 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderGetResponse> getOrderById(@PathVariable Long id) {
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderGetResponse>> getOrders(@ModelAttribute OrderFilter filter, Pageable pageable) {
-        return ResponseEntity.ok(orderService.getFilteredOrders(filter, pageable));
+    public ResponseEntity<List<OrderResponse>> getOrders(@ModelAttribute OrderFilter filter, Pageable pageable) {
+        return ResponseEntity.ok(orderService.getFilteredPagedOrders(filter, pageable));
     }
 
     @PostMapping
-    public ResponseEntity<OrderGetResponse> createOrder(@RequestBody OrderCreateRequest request) {
-        OrderGetResponse response = orderService.createOrder(request);
+    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderCreateRequest request) {
+        OrderResponse response = orderService.createOrder(request.getCustomerId(), request.getProductId(), request.getQuantity());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
