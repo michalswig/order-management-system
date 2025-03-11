@@ -2,6 +2,7 @@ package com.mike.ordermanagement.controller;
 
 import com.mike.ordermanagement.dto.order.OrderCreateRequest;
 import com.mike.ordermanagement.dto.order.OrderFilter;
+import com.mike.ordermanagement.dto.order.OrderGetResponse;
 import com.mike.ordermanagement.dto.order.OrderResponse;
 import com.mike.ordermanagement.service.OrderService;
 import org.springframework.data.domain.Pageable;
@@ -23,18 +24,18 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long id) {
+    public ResponseEntity<OrderGetResponse> getOrderById(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderResponse>> getOrders(@ModelAttribute OrderFilter filter, Pageable pageable) {
-        return ResponseEntity.ok(orderService.getFilteredPagedOrders(filter, pageable));
+    public ResponseEntity<List<OrderGetResponse>> getOrders(@ModelAttribute OrderFilter filter, Pageable pageable) {
+        return ResponseEntity.ok(orderService.getFilteredOrders(filter, pageable));
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderCreateRequest request) {
-        OrderResponse response = orderService.createOrder(request.getCustomerId(), request.getProductId(), request.getQuantity());
+    public ResponseEntity<OrderGetResponse> createOrder(@RequestBody OrderCreateRequest request) {
+        OrderGetResponse response = orderService.createOrder(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
