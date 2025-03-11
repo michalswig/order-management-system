@@ -2,10 +2,10 @@ package com.mike.ordermanagement.service;
 
 import com.mike.ordermanagement.dto.order.OrderCreateRequest;
 import com.mike.ordermanagement.dto.order.OrderFilter;
-import com.mike.ordermanagement.dto.order.OrderGetResponse;
+import com.mike.ordermanagement.dto.order.OrderResponse;
 import com.mike.ordermanagement.entity.*;
 import com.mike.ordermanagement.exceptions.NoOrdersFoundException;
-import com.mike.ordermanagement.convert.OrderConverter;
+import com.mike.ordermanagement.mapper.OrderConverter;
 import com.mike.ordermanagement.repository.CustomerRepository;
 import com.mike.ordermanagement.repository.OrderRepository;
 import com.mike.ordermanagement.repository.ProductRepository;
@@ -32,29 +32,29 @@ public class OrderService {
         this.customerRepository = customerRepository;
     }
 
-    public OrderGetResponse createOrder(OrderCreateRequest request) {
+    public OrderResponse createOrder(OrderCreateRequest request) {
         validateQuantity(request);
         Order order = getOrder(request.getCustomerId(), request.getProductId(), request.getQuantity());
         Order savedOrder = orderRepository.save(order);
         return getOrderGetResponse(savedOrder);
     }
 
-    public OrderGetResponse getOrderById(Long id) {
+    public OrderResponse getOrderById(Long id) {
         return orderRepository.findById(id)
-                .map(OrderConverter::toOrderGetResponse)
+                .map(OrderConverter::toOrderResponse)
                 .orElseThrow(() -> new NoOrdersFoundException("Order with ID " + id + " not found."));
     }
 
-    public List<OrderGetResponse> getFilteredOrders(OrderFilter filter, Pageable pageable) {
+    public List<OrderResponse> getFilteredOrders(OrderFilter filter, Pageable pageable) {
         Specification<Order> specification = getOrderSpecification(filter);
         Page<Order> orderPage = getOrders(pageable, specification);
         validateOrderPage(orderPage);
         return getOrdersGetResponse(orderPage);
     }
 
-    private List<OrderGetResponse> getOrdersGetResponse(Page<Order> orderPage) {
+    private List<OrderResponse> getOrdersGetResponse(Page<Order> orderPage) {
         return orderPage.stream()
-                .map(OrderConverter::toOrderGetResponse)
+                .map(OrderConverter::toOrderResponse)
                 .toList();
     }
 
@@ -78,8 +78,8 @@ public class OrderService {
         }
     }
 
-    private OrderGetResponse getOrderGetResponse(Order savedOrder) {
-        return OrderConverter.toOrderGetResponse(savedOrder);
+    private OrderResponse getOrderGetResponse(Order savedOrder) {
+        return OrderConverter.toOrderResponse(savedOrder);
     }
 
     private Order getOrder(Long customerId, Long productId, Long quantity) {

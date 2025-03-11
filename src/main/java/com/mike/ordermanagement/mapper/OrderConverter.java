@@ -9,7 +9,7 @@ public class OrderConverter {
         throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 
-    public static OrderResponse toOrderGetResponse(Order order) {
+    public static OrderResponse toOrderResponse(Order order) {
         if (order == null) {
             throw new IllegalArgumentException("Order cannot be null");
         }

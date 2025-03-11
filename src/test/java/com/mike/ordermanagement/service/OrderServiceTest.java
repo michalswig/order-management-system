@@ -2,7 +2,6 @@ package com.mike.ordermanagement.service;
 
 import com.mike.ordermanagement.dto.order.OrderCreateRequest;
 import com.mike.ordermanagement.dto.order.OrderFilter;
-import com.mike.ordermanagement.dto.order.OrderGetResponse;
 import com.mike.ordermanagement.dto.order.OrderResponse;
 import com.mike.ordermanagement.entity.*;
 import com.mike.ordermanagement.exceptions.NoOrdersFoundException;
@@ -76,7 +75,7 @@ class OrderServiceTest {
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
         when(orderRepository.save(any(Order.class))).thenReturn(order);
         //When
-        OrderGetResponse orderGetResponse = orderService.createOrder(request);
+        OrderResponse orderGetResponse = orderService.createOrder(request);
         //Then
         assertThat(orderGetResponse.getStatus()).isEqualTo(status);
         assertThat(orderGetResponse.getCustomerId()).isEqualTo(request.getCustomerId());
@@ -153,7 +152,7 @@ class OrderServiceTest {
         Page<Order> orderPage = new PageImpl<>(orders,pageable,orders.size());
         when(orderRepository.findAll(any(Specification.class),eq(pageable))).thenReturn(orderPage);
         //when
-        List<OrderGetResponse> filteredOrders = orderService.getFilteredOrders(filter, pageable);
+        List<OrderResponse> filteredOrders = orderService.getFilteredOrders(filter, pageable);
         //then
         assertThat(filteredOrders.size()).isEqualTo(2);
         verify(orderRepository, times(1)).findAll(any(Specification.class),eq(pageable));
