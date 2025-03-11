@@ -3,6 +3,7 @@ package com.mike.ordermanagement.service;
 import com.mike.ordermanagement.dto.order.OrderCreateRequest;
 import com.mike.ordermanagement.dto.order.OrderFilter;
 import com.mike.ordermanagement.dto.order.OrderGetResponse;
+import com.mike.ordermanagement.dto.order.OrderResponse;
 import com.mike.ordermanagement.entity.*;
 import com.mike.ordermanagement.exceptions.NoOrdersFoundException;
 import com.mike.ordermanagement.repository.CustomerRepository;
@@ -125,7 +126,7 @@ class OrderServiceTest {
         order.setId(orderId);
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
         //When & Then
-        OrderGetResponse orderById = orderService.getOrderById(orderId);
+        OrderResponse orderById = orderService.getOrderById(orderId);
         assertThat(orderId).isEqualTo(orderById.getId());
         verify(orderRepository, times(1)).findById(orderId);
 
