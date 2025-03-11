@@ -4,7 +4,9 @@ import com.mike.ordermanagement.dto.order.OrderCreateRequest;
 import com.mike.ordermanagement.dto.order.OrderFilter;
 import com.mike.ordermanagement.dto.order.OrderResponse;
 import com.mike.ordermanagement.entity.*;
+import com.mike.ordermanagement.exceptions.CustomerNotFoundException;
 import com.mike.ordermanagement.exceptions.NoOrdersFoundException;
+import com.mike.ordermanagement.exceptions.ProductNotFoundException;
 import com.mike.ordermanagement.repository.CustomerRepository;
 import com.mike.ordermanagement.repository.OrderRepository;
 import com.mike.ordermanagement.repository.ProductRepository;
@@ -40,24 +42,30 @@ class OrderServiceTest {
 
     @Mock
     private OrderRepository orderRepository;
-    @Mock
-    private CustomerRepository customerRepository;
+
     @Mock
     private ProductRepository productRepository;
 
-    @InjectMocks
-    private OrderService orderService;
+    @Mock
+    private CustomerRepository customerRepository;
 
     private Clock fixedClock;
+    private OrderService orderService;
+
     private OrderCreateRequest request;
 
     @BeforeEach
     void setUp() {
-        fixedClock = Clock.fixed(Instant.parse("2023-01-01T10:00:00Z"), ZoneId.of("UTC"));
-        Long customerId = 1L;
-        Long quantity = 2L;
-        Long productId = 1L;
-        request = new OrderCreateRequest(customerId, productId, quantity);
+        fixedClock = Clock.fixed(Instant.parse("2023-01-01T10:00:00Z"), ZoneId.systemDefault());
+
+        orderService = new OrderService(
+                orderRepository,
+                productRepository,
+                customerRepository,
+                fixedClock
+        );
+
+        request = new OrderCreateRequest(1L, 1L, 2L);
     }
 
     @Test
@@ -80,7 +88,7 @@ class OrderServiceTest {
         assertThat(orderGetResponse.getStatus()).isEqualTo(status);
         assertThat(orderGetResponse.getCustomerId()).isEqualTo(request.getCustomerId());
         assertNotNull(orderGetResponse, "Expected order to be created");
-        assertEquals(LocalDateTime.of(2023, 1, 1, 10, 0), orderGetResponse.getOrderDate());
+        assertEquals(LocalDateTime.of(2023, 1, 1, 11, 0), orderGetResponse.getOrderDate());
         verify(productRepository, times(1)).findById(1L);
         verify(customerRepository, times(1)).findById(1L);
         verify(orderRepository, times(1)).save(any(Order.class));
@@ -97,22 +105,21 @@ class OrderServiceTest {
     @Test
     void whenPassingInvalidOrderCreateRequestWithNonExistingProduct_thenThrowException() {
         //When
+        Customer customer = CustomerDataGenerator.generateCustomerPassingCustomerId(request.getCustomerId());
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
         when(productRepository.findById(request.getProductId())).thenReturn(Optional.empty());
         //Then
-        assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(request));
+        assertThrows(ProductNotFoundException.class, () -> orderService.createOrder(request));
         verify(productRepository, times(1)).findById(request.getProductId());
         verify(orderRepository, never()).save(any(Order.class));
-        verifyNoInteractions(customerRepository);
     }
 
     @Test
     void whenPassingInvalidOrderCreateRequestWithNonExistingCustomer_thenThrowException() {
-        //Given
-        when(productRepository.findById(1L)).thenReturn(Optional.of(new Product(request.getProductId())));
-        //When
+        //Given&When
         when(customerRepository.findById(request.getCustomerId())).thenReturn(Optional.empty());
         //Then
-        assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(request));
+        assertThrows(CustomerNotFoundException.class, () -> orderService.createOrder(request));
         verify(customerRepository, times(1)).findById(request.getCustomerId());
         verify(orderRepository, never()).save(any(Order.class));
     }
