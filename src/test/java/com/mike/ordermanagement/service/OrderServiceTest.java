@@ -152,7 +152,7 @@ class OrderServiceTest {
         Page<Order> orderPage = new PageImpl<>(orders,pageable,orders.size());
         when(orderRepository.findAll(any(Specification.class),eq(pageable))).thenReturn(orderPage);
         //when
-        List<OrderResponse> filteredOrders = orderService.getFilteredOrders(filter, pageable);
+        List<OrderResponse> filteredOrders = orderService.getFilteredPagedOrders(filter, pageable);
         //then
         assertThat(filteredOrders.size()).isEqualTo(2);
         verify(orderRepository, times(1)).findAll(any(Specification.class),eq(pageable));

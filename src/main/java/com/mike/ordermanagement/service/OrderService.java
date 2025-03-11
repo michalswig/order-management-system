@@ -45,7 +45,7 @@ public class OrderService {
                 .orElseThrow(() -> new NoOrdersFoundException("Order with ID " + id + " not found."));
     }
 
-    public List<OrderResponse> getFilteredOrders(OrderFilter filter, Pageable pageable) {
+    public List<OrderResponse> getFilteredPagedOrders(OrderFilter filter, Pageable pageable) {
         Specification<Order> specification = getOrderSpecification(filter);
         Page<Order> orderPage = getOrders(pageable, specification);
         validateOrderPage(orderPage);
