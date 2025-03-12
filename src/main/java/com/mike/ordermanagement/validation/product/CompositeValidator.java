@@ -27,5 +27,4 @@ public class CompositeValidator implements Validator<Product> {
             validator.validate(product);
         }
     }
-
 }

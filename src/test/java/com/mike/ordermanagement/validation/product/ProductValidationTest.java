@@ -6,39 +6,38 @@ import com.mike.ordermanagement.util.MessageUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
 class ProductValidationTest {
 
-    @Mock
     private MessageUtil messageUtil;
-    @Mock
     private NameValidator nameValidator;
-    @Mock
     private DescriptionValidator descriptionValidator;
-    @Mock
     private PriceValidator priceValidator;
-
-    @InjectMocks
     private CompositeValidator compositeValidator;
 
     @BeforeEach
     void setUp() {
+        messageUtil = mock(MessageUtil.class);
+        nameValidator = new NameValidator(messageUtil);
+        descriptionValidator = new DescriptionValidator(messageUtil);
+        priceValidator = new PriceValidator(messageUtil);
+
         compositeValidator = new CompositeValidator(
                 List.of(nameValidator, descriptionValidator, priceValidator),
                 messageUtil
         );
     }
+
 
     @Test
     void whenPassingValidProduct_thenShouldBeValid() {
@@ -60,6 +59,19 @@ class ProductValidationTest {
         ProductValidationException ex = assertThrows(ProductValidationException.class, () -> compositeValidator.validate(product));
         //Then
         assertEquals("Product cannot be null", ex.getMessage());
+    }
+
+    @Test
+    void whenPassingInvalidProductName_thenThrowsException() {
+        // Given
+        Product product = new Product();
+        product.setName("@@@");
+        product.setDescription("Valid Description");
+        product.setPrice(BigDecimal.valueOf(10.0));
+        //When
+        when(messageUtil.getMessage("product.name.invalid")).thenReturn("Invalid Product Name");
+        ProductValidationException ex = assertThrows(ProductValidationException.class, () -> compositeValidator.validate(product));
+        assertEquals("Invalid Product Name", ex.getMessage());
     }
 
 }
