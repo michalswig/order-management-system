@@ -12,6 +12,7 @@ import com.mike.ordermanagement.repository.CustomerRepository;
 import com.mike.ordermanagement.repository.OrderRepository;
 import com.mike.ordermanagement.repository.ProductRepository;
 import com.mike.ordermanagement.repository.specification.OrderSpecificationBuilder;
+import com.mike.ordermanagement.validation.product.CompositeValidator;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,15 +30,17 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
+    private final CompositeValidator validator;
     private final Clock clock;
 
     public OrderService(OrderRepository orderRepository,
                         ProductRepository productRepository,
-                        CustomerRepository customerRepository,
+                        CustomerRepository customerRepository, CompositeValidator validator,
                         Clock clock) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.customerRepository = customerRepository;
+        this.validator = validator;
         this.clock = clock;
     }
 
@@ -76,6 +79,8 @@ public class OrderService {
     private Order buildOrderWithProduct(Long customerId, Long productId, Long quantity) {
         Customer customer = getCustomerById(customerId);
         Product product = getProductById(productId);
+
+        validator.validate(product);
 
         Order order = new Order();
         order.setStatus(OrderStatus.PENDING);

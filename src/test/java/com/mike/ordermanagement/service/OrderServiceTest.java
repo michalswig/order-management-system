@@ -12,10 +12,10 @@ import com.mike.ordermanagement.repository.OrderRepository;
 import com.mike.ordermanagement.repository.ProductRepository;
 import com.mike.ordermanagement.util.CustomerDataGenerator;
 import com.mike.ordermanagement.util.OrderDataGenerator;
+import com.mike.ordermanagement.validation.product.CompositeValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -49,6 +49,9 @@ class OrderServiceTest {
     @Mock
     private CustomerRepository customerRepository;
 
+    @Mock
+    private CompositeValidator validator;
+
     private Clock fixedClock;
     private OrderService orderService;
 
@@ -62,6 +65,7 @@ class OrderServiceTest {
                 orderRepository,
                 productRepository,
                 customerRepository,
+                validator,
                 fixedClock
         );
 
