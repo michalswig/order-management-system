@@ -133,4 +133,29 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(CustomerNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleCustomerNotFoundException(CustomerNotFoundException ex) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                ErrorMessages.NOT_FOUND,
+                ex.getMessage(),
+                getRequestPath()
+        );
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleProductNotFoundException(ProductNotFoundException ex) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                ErrorMessages.NOT_FOUND,
+                ex.getMessage(),
+                getRequestPath()
+        );
+    }
+
+
 }
