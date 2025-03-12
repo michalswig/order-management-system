@@ -1,6 +1,6 @@
 package com.mike.ordermanagement.exceptions;
 
-import com.mike.ordermanagement.constants.ErrorMessages;
+import com.mike.ordermanagement.constants.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
-                ErrorMessages.VALIDATION_ERROR,
+                ErrorMessage.VALIDATION_ERROR.message,
                 String.join(", ", errors),
                 getRequestPath()
         );
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),
-                ErrorMessages.NOT_FOUND,
+                ErrorMessage.NOT_FOUND.message,
                 ex.getMessage(),
                 getRequestPath()
         );
@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
-                ErrorMessages.BAD_REQUEST,
+                ErrorMessage.BAD_REQUEST.message,
                 ex.getMessage(),
                 getRequestPath()
         );
@@ -91,8 +91,8 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                ErrorMessages.INTERNAL_SERVER_ERROR,
-                ErrorMessages.UNEXPECTED_ERROR,
+                ErrorMessage.INTERNAL_SERVER_ERROR.message,
+                ErrorMessage.UNEXPECTED_ERROR.message,
                 getRequestPath()
         );
     }
@@ -103,7 +103,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.METHOD_NOT_ALLOWED.value(),
-                ErrorMessages.METHOD_NOT_ALLOWED,
+                ErrorMessage.METHOD_NOT_ALLOWED.message,
                 ex.getMessage(),
                 getRequestPath()
         );
@@ -115,7 +115,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
-                ErrorMessages.BAD_REQUEST,
+                ErrorMessage.BAD_REQUEST.message,
                 "Invalid value: '" + ex.getValue() + "' for field: '" + ex.getName() + "'. Expected type: " + (ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown"),
                 getRequestPath()
         );
@@ -127,8 +127,8 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
-                ErrorMessages.BAD_REQUEST,
-                ErrorMessages.INVALID_PAYLOAD,
+                ErrorMessage.BAD_REQUEST.message,
+                ErrorMessage.INVALID_PAYLOAD.message,
                 getRequestPath()
         );
     }
@@ -139,7 +139,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),
-                ErrorMessages.NOT_FOUND,
+                ErrorMessage.NOT_FOUND.message,
                 ex.getMessage(),
                 getRequestPath()
         );
@@ -151,7 +151,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),
-                ErrorMessages.NOT_FOUND,
+                ErrorMessage.NOT_FOUND.message,
                 ex.getMessage(),
                 getRequestPath()
         );
