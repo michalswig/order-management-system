@@ -1,4 +1,4 @@
-package com.mike.ordermanagement.validation.product;
+package com.mike.ordermanagement.validation;
 
 import com.mike.ordermanagement.exceptions.ProductValidationException;
 

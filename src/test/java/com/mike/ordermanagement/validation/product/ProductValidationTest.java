@@ -23,7 +23,7 @@ class ProductValidationTest {
     private NameValidator nameValidator;
     private DescriptionValidator descriptionValidator;
     private PriceValidator priceValidator;
-    private CompositeValidator compositeValidator;
+    private ProductValidator compositeValidator;
 
     @BeforeEach
     void setUp() {
@@ -32,7 +32,7 @@ class ProductValidationTest {
         descriptionValidator = new DescriptionValidator(messageUtil);
         priceValidator = new PriceValidator(messageUtil);
 
-        compositeValidator = new CompositeValidator(
+        compositeValidator = new ProductValidator(
                 List.of(nameValidator, descriptionValidator, priceValidator),
                 messageUtil
         );

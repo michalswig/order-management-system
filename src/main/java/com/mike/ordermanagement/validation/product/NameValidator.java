@@ -3,6 +3,7 @@ package com.mike.ordermanagement.validation.product;
 import com.mike.ordermanagement.entity.Product;
 import com.mike.ordermanagement.exceptions.ProductValidationException;
 import com.mike.ordermanagement.util.MessageUtil;
+import com.mike.ordermanagement.validation.Validator;
 import org.springframework.stereotype.Component;
 
 import static com.mike.ordermanagement.constants.ProductMessages.*;
