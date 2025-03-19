@@ -3,6 +3,7 @@ package com.mike.ordermanagement.validation.product;
 import com.mike.ordermanagement.entity.Product;
 import com.mike.ordermanagement.exceptions.ProductValidationException;
 import com.mike.ordermanagement.util.MessageUtil;
+import com.mike.ordermanagement.validation.Validator;
 import org.springframework.stereotype.Component;
 
 import static com.mike.ordermanagement.constants.ProductMessages.MAX_DESCRIPTION_LENGTH;
@@ -19,13 +20,22 @@ public class DescriptionValidator implements Validator<Product> {
 
     @Override
     public void validate(Product product) {
-        if (product.getDescription() == null || product.getDescription().trim().isEmpty()) {
-            throw new ProductValidationException(messageUtil.getMessage("product.description.empty"));
-        }
-        if (product.getDescription().length() < MIN_DESCRIPTION_LENGTH || product.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
+        String description = product.getDescription();
+        validateIfEmptyDescription(description);
+        validateDescriptionLength(description);
+    }
+
+    private void validateDescriptionLength(String description) {
+        if (description.length() < MIN_DESCRIPTION_LENGTH || description.length() > MAX_DESCRIPTION_LENGTH) {
             throw new ProductValidationException(
                     messageUtil.getMessage("product.description.length", MIN_DESCRIPTION_LENGTH, MAX_DESCRIPTION_LENGTH)
             );
+        }
+    }
+
+    private void validateIfEmptyDescription(String description) {
+        if (description == null || description.trim().isEmpty()) {
+            throw new ProductValidationException(messageUtil.getMessage("product.description.empty"));
         }
     }
 

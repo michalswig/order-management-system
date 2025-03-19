@@ -15,7 +15,7 @@ public class OrderSpecificationBuilder {
             spec = spec.and(new OrderByCustomerIdSpecification(filter.getCustomerId()));
         }
         if (Objects.nonNull(filter.getStatus())) {
-            spec = spec.and(new OrderByStatusSpecification(filter.getStatus().toString()));
+            spec = spec.and(new OrderByStatusSpecification(filter.getStatus()));
         }
         if (Objects.nonNull(filter.getOrderDateFrom()) || Objects.nonNull(filter.getOrderDateTo())) {
             spec = spec.and(new OrderByDateRangeSpecification("orderDate", filter.getOrderDateFrom(), filter.getOrderDateTo()));

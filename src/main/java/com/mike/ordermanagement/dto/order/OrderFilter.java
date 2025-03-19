@@ -1,9 +1,17 @@
 package com.mike.ordermanagement.dto.order;
 
 import com.mike.ordermanagement.entity.OrderStatus;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderFilter {
     private Long customerId;
     private OrderStatus status;
@@ -13,43 +21,4 @@ public class OrderFilter {
     private LocalDateTime deliveryDateTo;
     private LocalDateTime canceledDateFrom;
     private LocalDateTime canceledDateTo;
-
-    public OrderFilter() {
-    }
-
-    public OrderFilter(Long customerId) {
-        this.customerId = customerId;
-    }
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public LocalDateTime getOrderDateFrom() {
-        return orderDateFrom;
-    }
-
-    public LocalDateTime getOrderDateTo() {
-        return orderDateTo;
-    }
-
-    public LocalDateTime getDeliveryDateFrom() {
-        return deliveryDateFrom;
-    }
-
-    public LocalDateTime getDeliveryDateTo() {
-        return deliveryDateTo;
-    }
-
-    public LocalDateTime getCanceledDateFrom() {
-        return canceledDateFrom;
-    }
-
-    public LocalDateTime getCanceledDateTo() {
-        return canceledDateTo;
-    }
 }

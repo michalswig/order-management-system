@@ -3,6 +3,7 @@ package com.mike.ordermanagement.validation.product;
 import com.mike.ordermanagement.entity.Product;
 import com.mike.ordermanagement.exceptions.ProductValidationException;
 import com.mike.ordermanagement.util.MessageUtil;
+import com.mike.ordermanagement.validation.Validator;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -18,11 +19,20 @@ public class PriceValidator implements Validator<Product> {
 
     @Override
     public void validate(Product product) {
-        if (product.getPrice() == null) {
-            throw new ProductValidationException(messageUtil.getMessage("product.price.null"));
-        }
-        if (product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+        BigDecimal price = product.getPrice();
+        validateIfPriceNull(price);
+        validateIfPriceIsNegative(price);
+    }
+
+    private void validateIfPriceIsNegative(BigDecimal price) {
+        if (price.compareTo(BigDecimal.ZERO) <= 0) {
             throw new ProductValidationException(messageUtil.getMessage("product.price.negative"));
+        }
+    }
+
+    private void validateIfPriceNull(BigDecimal price) {
+        if (price == null) {
+            throw new ProductValidationException(messageUtil.getMessage("product.price.null"));
         }
     }
 
