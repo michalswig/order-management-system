@@ -117,6 +117,34 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
+    <changeSet id="8" author="you">
+        <modifyDataType tableName="customers" columnName="id" newDataType="bigint"/>
+    </changeSet>
+    <changeSet id="9" author="you">
+        <modifyDataType tableName="orders" columnName="id" newDataType="bigint"/>
+    </changeSet>
+    <changeSet id="10" author="you">
+        <modifyDataType tableName="products" columnName="id" newDataType="bigint"/>
+    </changeSet>
+    <changeSet id="11" author="you">
+        <modifyDataType tableName="order_products" columnName="id" newDataType="bigint"/>
+    </changeSet>
+    <changeSet id="12" author="you">
+        <modifyDataType tableName="order_products" columnName="quantity" newDataType="int"/>
+    </changeSet>
+    <changeSet id="13" author="you">
+        <modifyDataType tableName="order_products" columnName="quantity" newDataType="bigint"/>
+    </changeSet>
+    <changeSet id="14" author="you">
+        <modifyDataType tableName="order_products" columnName="order_id" newDataType="bigint"/>
+    </changeSet>
+    <changeSet id="15" author="you">
+        <modifyDataType tableName="order_products" columnName="product_id" newDataType="bigint"/>
+    </changeSet>
+    <changeSet id="16" author="you">
+        <modifyDataType tableName="orders" columnName="customer_id" newDataType="bigint"/>
+    </changeSet>
+
     <!-- Insert sample data into customers -->
     <changeSet id="5" author="you">
         <sql>
