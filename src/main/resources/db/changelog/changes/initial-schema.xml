@@ -1,0 +1,157 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- customers -->
+    <changeSet id="1" author="you">
+        <createTable tableName="customers">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="city" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="state" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="zip_code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- products -->
+    <changeSet id="2" author="you">
+        <createTable tableName="products">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="price" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- orders -->
+    <changeSet id="3" author="you">
+        <createTable tableName="orders">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="customer_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="canceled_date" type="TIMESTAMP"/>
+            <column name="delivered_date" type="TIMESTAMP"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="orders"
+                                 baseColumnNames="customer_id"
+                                 constraintName="fk_orders_customer"
+                                 referencedTableName="customers"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- order_products -->
+    <changeSet id="4" author="you">
+        <createTable tableName="order_products">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="order_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="order_products"
+                                 baseColumnNames="order_id"
+                                 constraintName="fk_order_products_order"
+                                 referencedTableName="orders"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="order_products"
+                                 baseColumnNames="product_id"
+                                 constraintName="fk_order_products_product"
+                                 referencedTableName="products"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- Insert sample data into customers -->
+    <changeSet id="5" author="you">
+        <sql>
+            INSERT INTO customers (name, email, phone, address, city, state, country, zip_code, created_at, updated_at)
+            VALUES ('Alice Johnson', 'alice@example.com', '+1 555-1234', '123 Main St', 'New York', 'NY', 'USA',
+                    '10001', NOW(), NULL),
+                   ('Bob Smith', 'bob@example.com', '+1 555-5678', '456 Oak St', 'Los Angeles', 'CA', 'USA', '90001',
+                    NOW(), NULL),
+                   ('Charlie Brown', 'charlie@example.com', '+1 555-8765', '789 Pine St', 'Chicago', 'IL', 'USA',
+                    '60601', NOW(), NULL),
+                   ('Diana White', 'diana@example.com', '+1 555-4321', '101 Maple St', 'Houston', 'TX', 'USA', '77001',
+                    NOW(), NULL);
+        </sql>
+    </changeSet>
+
+    <!-- Insert sample data into products -->
+    <changeSet id="6" author="you">
+        <sql>
+            INSERT INTO products (name, description, price, created_at, updated_at)
+            VALUES ('Laptop', '15-inch laptop with Intel i7 processor', 1200.00, NOW(), NULL),
+                   ('Wireless Mouse', 'Ergonomic wireless mouse with 2.4 GHz connectivity', 25.50, NOW(), NULL),
+                   ('Keyboard', 'Mechanical keyboard with RGB lighting', 80.75, NOW(), NULL),
+                   ('Monitor', '27-inch 4K UHD monitor with HDR support', 350.00, NOW(), NULL);
+        </sql>
+    </changeSet>
+
+    <!-- Insert sample data into orders -->
+    <changeSet id="7" author="you">
+        <sql>
+            INSERT INTO orders (customer_id, status, order_date, canceled_date, delivered_date)
+            VALUES (1, 'PENDING', NOW(), NULL, NULL),
+                   (2, 'SHIPPED', NOW() - INTERVAL '2 days', NULL, NOW() - INTERVAL '1 day'),
+                   (3, 'DELIVERED', NOW() - INTERVAL '5 days', NULL, NOW() - INTERVAL '3 days'),
+                   (4, 'CANCELED', NOW() - INTERVAL '7 days', NOW() - INTERVAL '6 days', NULL);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
